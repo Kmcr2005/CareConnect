@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADMIN</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            width: 50%;          
+            margin: 0 auto;       
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    
+        #adminChart {
+            width: 100% !important;
+            height: auto !important;
+        }
+    </style>
+</head>
+<body>
+    
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">
+            <img src="static/stethoscope.png" alt="" width="30" height="24" class="d-inline-block align-text-top">
+            Hello,Admin!
+          </a>
+          <form class="d-flex">
+            <form class="d-flex mb-3" method="GET" action="{{ url_for('admindash') }}">
+                <input class="form-control me-2" type="search" placeholder="Search doctors/patients" name="search" value="{{ search_query }}">
+                <button class="btn btn-outline-success me-2" type="submit">Search</button>
+                <a href="{{ url_for('admindash') }}" class="btn btn-outline-secondary">Clear</a>
+            </form>
+          </form>
+          <a class="nav-link" href="{{ url_for('logout') }}">
+          <button type="button" class="btn btn-danger">Logout</button>
+          </a>
+
+        </div>
+
+
+        
+    </nav>
+    
+    <div class="container">
+        <h3>Registered Doctors</h3>
+        <a href="{{ url_for('doctorreg') }}">
+        <button  type="button" class="btn btn-primary btn-lg">Add Doctor Profile</button>
+        </a>
+        
+
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">DID</th>
+                <th scope="col">Doctor's Name</th>
+                <th scope="col">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for user in doctors %}
+                <tr>
+                    <td>{{ user.did }}</td>
+                    <td class="{% if doctor_matches.get(user.did) %}table-warning{% endif %}">
+                        {{ user.fname|upper }} {{ user.lname|upper }}
+                    </td>
+                    <td>
+                        <form action="{{ url_for('doctoredit', did=user.did) }}"  style="display:inline;">
+                            <button class="btn btn-warning">Edit</button>
+                        </form>
+                        <form action="{{ url_for('doctordelete', did=user.did) }}"  style="display:inline;">
+                            <button class="btn btn-danger">Remove</button>
+                        </form>
+                        
+                        <form action="{{ url_for('toggle_blacklist', did=user.did) }}" method="POST" style="display:inline;">
+                            <button class="btn 
+                                {% if user.blacklist %} btn-dark {% else %} btn-light {% endif %}">
+                                Blacklist
+                            </button>
+                        </form>
+                        
+
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="container">
+        <h3>Registered Patients</h3>
+        
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">PID</th>
+                <th scope="col">Patient's Name</th>
+                <th scope="col">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for user in patients %}
+                <tr>
+                    <td>{{ user.pid }}</td>
+                    <td class="{% if patient_matches.get(user.pid) %}table-warning{% endif %}">
+                        {{ user.fname|upper }} {{ user.lname|upper }}
+                    </td>
+                    <td>
+                        <form action="{{ url_for('patientedit', pid=user.pid) }}"  style="display:inline;">
+                            <button class="btn btn-warning">Edit</button>
+                        </form>
+                        <form action="{{ url_for('patientremove', pid=user.pid) }}"  style="display:inline;">
+                            <button class="btn btn-danger">Remove</button>
+                        </form>
+                        <form action="{{ url_for('toggle_blacklist_patient', pid=user.pid) }}" method="POST" style="display:inline;">
+                            <button class="btn 
+                                {% if user.blacklist %} btn-dark {% else %} btn-light {% endif %}">
+                                Blacklist
+                            </button>
+                        </form>
+
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="container">
+        <h3>Appoinments</h3>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">AID</th>
+                <th scope="col">Patient's Name</th>
+                <th scope="col">Doctor's Name</th>
+                <th scope="col">Date</th>
+                <th scope="col">Shift</th>
+                
+                <th scope="col">Patient's history</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for user in appoinments %}
+                <tr>
+                    <td>{{ user.apid }}</td>
+                    <td>{{ patient_dict[user.pid] | upper }}</td>
+                    <td>{{ doctor_dict[user.did] | upper }}</td>
+                    <td>{{user.date}}</td>
+                    <td>{{user.shift}}</td>
+                    <td>
+                        <form action="{{ url_for('patienthistory',pid=user.pid) }}"  style="display:inline;">
+                            <button class="btn btn-warning">Info</button>
+                        </form>
+                     </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="container">
+        <h3>Department</h3>
+        <a href="{{ url_for('adddepartment') }}">
+            <button  type="button" class="btn btn-primary btn-lg">Add Department</button>
+        </a>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">DID</th>
+                <th scope="col">Department</th>
+                <th scope="col">Description</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for user in departments %}
+                <tr>
+                    <td>{{ user.deptid }}</td>
+                    <td>{{ user.deptname }}</td>
+                    <td>{{ user.desc }}</td>
+                    <td>
+                        <form action="{{ url_for('deptedit', deptid=user.deptid) }}"  style="display:inline;">
+                            <button class="btn btn-warning">Edit</button>
+                        </form>
+                        <form action="{{ url_for('deptremove', deptid=user.deptid) }}"  style="display:inline;">
+                            <button class="btn btn-danger">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </form>
+    <div class="chart-container">
+        <canvas id="adminChart"></canvas>
+    </div>
+   
+    
+    <script>
+        const ctx = document.getElementById('adminChart');
+    
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Appointments', 'Patients', 'Doctors'],
+                datasets: [{
+                    label: 'Admin Overview',
+                    data: [
+                        {{ appoinments | length }},
+                        {{ patients | length }},
+                        {{ doctors | length }}
+                    ],
+                    backgroundColor: ['#FF6384', '#36A2EB', '#4BC0C0'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+    
+    
+</body>
+</html>

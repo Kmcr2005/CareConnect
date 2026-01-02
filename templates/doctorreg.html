@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor's Registration</title>
+</head>
+<body>
+    <form method="post">
+
+        <p>Doctor's Registeration</p>
+        <input name="fname" placeholder="first name" required/><br><br>    
+        <input name="lname" placeholder="last name"/><br><br>
+        <input type="number" name="exp" placeholder="Experience" required/><br><br>
+        <input type="number" name="deptid" placeholder="Department ID" required/><br><br>
+        <textarea name="desc" placeholder="Description" required></textarea><br><br>
+        <input name="username" placeholder="Username" required/><br><br>
+        <input type="password" name="password" placeholder="Password" required/><br><br>
+
+        <button>Register</button>
+        <a href={{url_for('admindash')}}>Back to admin dash</a>
+    </form>
+    {%if again%}
+        <a>User exits</a>
+    {%endif%}
+</body>
+</html>

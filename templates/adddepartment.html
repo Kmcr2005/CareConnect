@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADD DEPARTMENT</title>
+</head>
+<body>
+    <form method="post">
+
+        <p>ADD DEPARTMENT</p>
+        <input name="deptname" placeholder="Department Name" required/><br><br>    
+       
+        <textarea name="desc" placeholder="Description" required></textarea><br><br>
+        
+
+        <button>Register</button>
+        <a href={{url_for('admindash')}}>Back to admin dash</a>
+    </form>
+    {%if again%}
+        <a>User exits</a>
+    {%endif%}
+</body>
+</html>

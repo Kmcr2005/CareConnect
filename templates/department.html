@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Department</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <style>
+        .slot-btn {
+    display: block;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 600;
+    cursor: pointer;
+        }
+
+        .slot-green {
+            background: #28a745;
+            color: white;
+        }
+
+        .slot-red {
+            background: #dc3545;
+            color: white;
+            cursor: not-allowed !important;
+            opacity: 0.75;
+                   }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">
+            <img src="{{ url_for('static', filename='stethoscope.png') }}" width="30" height="24" class="d-inline-block align-text-top">
+
+            Department of {{department.deptname}}!
+          </a>
+          
+            
+              
+          
+          <a href="{{ url_for('patientdash',pid=patient.pid) }}">
+            <button type="button" class="btn btn-danger">Back</button>
+            </a>
+          
+        </div>
+    </nav>
+    <div class="container">
+        <h3>Overview</h3>
+        <p>{{department.desc}}</p>
+    </div>
+    <div class="container">
+            <h3>Doctor's List</h3>
+            
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">DID</th>
+                    <th scope="col">Doctor's Name</th>
+                    <th scope="col">Speciality</th>
+                    <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for doc in doctors %}
+                    <tr>
+                        <td>{{ doc.did }}</td>
+                        <td>{{ doc.fname|upper}} {{ doc.lname|upper}}</td>
+                        <td>{{ doc.desc}}</td>
+                        <td>
+                            <form action="{{ url_for('department', deptid=department.deptid, pid=patient.pid,did=doc.did) }}"  style="display:inline;">
+                                <a href="{{ url_for('department', pid=patient.pid, deptid=department.deptid, did=doc.did) }}" class="btn btn-warning" style="display:inline-block;">
+                                    Availability
+                                </a>
+                            </form>
+                            
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if doctor %}
+        {% set morning = "08:00 - 12:00" %}
+        {% set evening = "04:00 - 09:00" %}
+
+        <form action="{{ url_for('bookslot', pid=patient.pid, deptid=department.deptid, did=doctor.did) }}" method="POST">
+
+        <div class="container mt-4">
+            <h3 class="mb-3">Doctor's Availability</h3>
+
+            <div class="row g-3">
+
+                {% for d in dates %}
+                <div class="col-md-12 mb-3 p-3 border rounded">
+
+                    <!-- DATE -->
+                    <h5 class="fw-bold">{{ d }}</h5>
+
+                    <div class="row">
+                        <!-- MORNING -->
+                        {% set slot_val = d ~ "|" ~ morning %}
+                        <div class="col-md-4 slot-card">
+                            <input 
+                                type="radio" 
+                                name="slot" 
+                                id="m{{ loop.index }}" 
+                                value="{{ slot_val }}"
+                                {% if slot_val in blocked_slots %} disabled {% endif %}
+                            >
+                            <label 
+                                class="slot-btn {% if slot_val in blocked_slots %} slot-red {% else %} slot-green {% endif %}"
+                                for="m{{ loop.index }}"
+                            >
+                                {{ morning }}
+                            </label>
+                           
+                        </div>
+
+                        <!-- EVENING -->
+                        {% set slot_val = d ~ "|" ~ evening %}
+                        <div class="col-md-4 slot-card">
+                            <input 
+                                type="radio" 
+                                name="slot" 
+                                id="e{{ loop.index }}" 
+                                value="{{ slot_val }}"
+                                {% if slot_val in blocked_slots %} disabled {% endif %}
+                            >
+                            <label 
+                                class="slot-btn {% if slot_val in blocked_slots %} slot-red {% else %} slot-green {% endif %}"
+                                for="e{{ loop.index }}"
+                            >
+                                {{ evening }}
+                            </label>
+                          
+                        </div>
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="text-end mt-3">
+                <button type="submit" class="btn btn-danger">Book Slot</button>
+            </div>
+        </div>
+        </form>
+       
+        {% endif %}
+
+        
+    
+    
+</body>
+</html>

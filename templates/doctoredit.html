@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Doctor</title>
+</head>
+<body>
+<h2>Edit Doctor Details</h2>
+
+<form method="POST">
+    Username: {{ doctor.username }}<br><br>
+
+    First Name:
+    <input type="text" name="fname" value="{{ doctor.fname }}" required><br><br>
+
+    Last Name:
+    <input type="text" name="lname" value="{{ doctor.lname }}" required><br><br>
+
+    Experience:
+    <input type="text" name="exp" value="{{ doctor.exp }}" required><br><br>
+
+    Description:
+    <textarea name="desc" required>{{ doctor.desc }}</textarea><br><br>
+
+    Department ID:
+    <input type="number" name="deptid" value="{{ doctor.deptid }}" required><br><br>
+
+    Password:
+    <input type="text" name="password" value="{{ doctor.password }}" required><br><br>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a href="{{ url_for('admindash') }}">Cancel</a>
+</form>
+</body>
+</html>

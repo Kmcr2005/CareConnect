@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient's History</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</head>
+<body>
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">
+            <img src="{{ url_for('static', filename='stethoscope.png') }}" 
+               width="30" height="24" class="d-inline-block align-text-top">
+
+            {{patient.fname | upper}}'s History
+          </a>
+          
+            
+              
+          
+          <a class="nav-link" href="{{ request.referrer }}">
+            <button type="button" class="btn btn-danger">Back</button>
+            </a>
+          
+        </div>
+    </nav>
+        <div class="container">
+            <p><h3>Patient's Details</h3>
+            Username: {{ patient.username }}<br><br>
+            Patient's Name: {{ patient.fname|upper }} {{ patient.lname|upper }}<br><br>
+            Patient's Age: {{patient.age}}<br><br>
+            Patient Weight:{{patient.weight}}<br><br>
+            Patient Height:{{patient.height}}<br><br>
+           </p>
+        </div>
+        <div class="container">
+            <h3>History</h3>
+            
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Tid</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Doctor's Name</th>
+                    <th scope="col">test</th>
+                    <th scope="col">diagnosis</th>
+                    <th scope="col">prescription</th>
+
+                    
+                </tr>
+                </thead>
+                <tbody>
+                    {% for treat in treatments %}
+                    <tr>
+                        <td>{{ treat.tid }}</td>
+                        <td>{{ treat.date}}</td>
+                        <td>{{ doctors[treat.did] | upper}}</td>
+                        <td>{{ treat.test}}</td>
+                        <td>{{ treat.diagnosis}}</td>
+                        <td>{{ treat.prescription}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        
+    
+    
+</body>
+</html>
